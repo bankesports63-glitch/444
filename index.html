@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BANKSHOP - ศูนย์รวมรองเท้าฟุตซอล</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ui-enhancements.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- UI Enhancements --- */
+
+        /* Navbar styling on scroll */
+        #navbar.scrolled {
+            background-color: rgba(20, 20, 20, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Scroll-reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Enhanced product card hover effect */
+        .products-grid .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* --- Login Modal Enhancements (modernized) --- */
+        #loginModal .modal-content {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(250,250,250,0.98) 100%);
+            color: #1f2933;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15), 0 2px 6px rgba(15,23,42,0.06);
+            animation: zoomIn 0.28s cubic-bezier(.2,.9,.3,1);
+            padding: 28px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        #loginModal .modal-header {
+            display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;
+        }
+
+        #loginModal h2 {
+            color: #0f1720;
+            font-weight: 700;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        #loginModal p.helper {
+            margin: 6px 0 12px; color: #64748b; font-size: 13px;
+        }
+
+        #loginModal input[type="text"],
+        #loginModal input[type="password"] {
+            background-color: #fff;
+            color: #0f1720;
+            border: 1px solid #e6eef6;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: inset 0 1px 2px rgba(15,23,42,0.02);
+            transition: box-shadow 0.18s, border-color 0.18s, transform 0.12s;
+        }
+
+        #loginModal input::placeholder { color: #94a3b8; }
+        #loginModal input:focus { outline: none; border-color: #7c3aed; box-shadow: 0 6px 18px rgba(124,58,237,0.08); transform: translateY(-1px); }
+
+        .login-actions { display:flex; gap:10px; align-items:center; margin-top:6px; }
+        .login-btn { flex:1; padding:12px 16px; border-radius:10px; background:linear-gradient(90deg,#7c3aed,#4f46e5); color:#fff; border:none; font-weight:700; cursor:pointer; box-shadow: 0 8px 20px rgba(79,70,229,0.12); }
+        .login-btn:hover { transform: translateY(-2px); }
+        .secondary-link { background:transparent; border:1px solid #e6eef6; color:#0f1720; padding:10px 12px; border-radius:10px; cursor:pointer; }
+
+        .form-note { font-size:12px; color:#64748b; margin-top:10px; }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Tabs styles */
+        .login-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #F7C548;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: background 0.3s;
+        }
+
+        .tab-btn.active {
+            background: rgba(247, 197, 72, 0.2);
+            border-radius: 5px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+        /* Notifications UI */
+        .notif-icon { position: relative; cursor: pointer; display:inline-block; color:#fff; margin-right:8px; }
+        .notif-badge { position: absolute; top: -6px; right: -8px; background: #e74c3c; color: #fff; border-radius: 50%; padding: 2px 6px; font-size: 12px; font-weight:700; }
+        .notification-center { position: absolute; right: 10px; top: 56px; width: 320px; background: #fff; color:#222; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; z-index: 9999; max-height: 400px; overflow: auto; }
+        .notification-center .notif-item { padding: 10px; border-bottom: 1px solid #f1f1f1; font-size: 13px; }
+        .notification-center .notif-item.read { opacity: 0.6; }
+        .notification-center .notif-item .notif-time { display:block; font-size:11px; color:#888; margin-top:6px; }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div id="notificationArea"></div>
+
+    <nav id="navbar">
+        <div class="logo">BANK<span>SHOP</span></div>
+        <ul class="nav-links">
+            <li><a href="#home">หน้าแรก</a></li>
+            <li><a href="#products">สินค้า</a></li>
+            <li><a href="#contact">ติดต่อ</a></li>
+            
+            <li id="loginSection">
+                <button class="login-btn" onclick="openModal('loginModal')">🔐 เข้าสู่ระบบ</button>
+            </li>
+            
+            <li id="userSection" style="display: none;">
+                <span id="userNameDisplay"></span>
+                <button class="login-btn" onclick="showMyOrders()" style="margin-left:8px;">📦 คำสั่งซื้อของฉัน</button>
+                <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+            </li>
+            
+            <li id="adminSection" style="display: none;">
+                <button class="login-btn" onclick="goToAdmin()" style="background: #e74c3c;">🔐 Admin</button>
+            </li>
+            <li>
+                <button class="cart-btn" onclick="openModal('cartModal')">
+                    🛒 <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>ปลดปล่อยศักยภาพในสนาม</h1>
+            <p>รวมรองเท้าฟุตซอลแบรนด์ดัง Breaker, Nike, Pan, Joma ของแท้ 100%</p>
+            <a href="#products" class="cta-button">เลือกรองเท้าของคุณ</a>
+        </div>
+    </section>
+
+    <section class="products-section" id="products">
+        <h2 class="section-title reveal">สินค้าทั้งหมด</h2>
+        
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterProducts('all')">ทั้งหมด</button>
+            <button class="filter-btn" onclick="filterProducts('breaker')">BREAKER</button>
+            <button class="filter-btn" onclick="filterProducts('nike')">NIKE</button>
+            <button class="filter-btn" onclick="filterProducts('pan')">PAN</button>
+            <button class="filter-btn" onclick="filterProducts('joma')">JOMA</button>
+        </div>
+        
+        <div class="products-grid" id="productsGrid">
+            </div>
+    </section>
+
+    <footer id="contact">
+        <p>&copy; 2025 BANKSHOP. All rights reserved.</p>
+        <p>ติดต่อ Line: banknx_xz27</p>
+    </footer>
+
+    <!-- Modal Login -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('loginModal')" aria-label="ปิด">&times;</button>
+
+            <!-- Brand header -->
+            <div class="modal-header">
+                <h2>เข้าสู่ระบบ / ลงทะเบียน</h2>
+                <div style="font-size:12px;color:#64748b">ปลอดภัย &amp; เร็ว</div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="login-tabs" role="tablist">
+                <button class="tab-btn active" onclick="switchLoginTab('tab-login', event)" role="tab">เข้าสู่ระบบ</button>
+                <button class="tab-btn" onclick="switchLoginTab('tab-register', event)" role="tab">ลงทะเบียน</button>
+            </div>
+
+            <!-- Tab Login -->
+            <div id="tab-login" class="tab-pane active">
+                <p class="helper">เข้าสู่ระบบเพื่อจัดการคำสั่งซื้อและดูสถานะ</p>
+                <form onsubmit="handleLogin(event)" class="auth-form">
+                    <div style="position:relative; margin-bottom:10px;">
+                        <input type="text" id="loginUsername" placeholder="ชื่อผู้ใช้งาน" required aria-label="ชื่อผู้ใช้งาน">
+                    </div>
+                    <div style="position:relative; margin-bottom:6px;">
+                        <input type="password" id="loginPassword" placeholder="รหัสผ่าน" required aria-label="รหัสผ่าน">
+                        <button type="button" onclick="toggleInputVisibility('loginPassword', this)" class="secondary-link" style="position:absolute; right:8px; top:6px;">👁️</button>
+                    </div>
+
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px;">
+                        <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#64748b;"><input type="checkbox" id="rememberMe"> จดจำฉัน</label>
+                        <a href="#" style="font-size:13px; color:#7c3aed; text-decoration:none;">ลืมรหัสผ่าน?</a>
+                    </div>
+
+                    <div class="login-actions" style="margin-top:14px;">
+                        <button type="submit" class="login-btn">เข้าสู่ระบบ</button>
+                    </div>
+
+                    <div class="form-note">หรือเข้าสู่ระบบด้วย</div>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button type="button" class="secondary-link" onclick="alert('Placeholder: Line Login')">LINE</button>
+                        <button type="button" class="secondary-link" onclick="alert('Placeholder: OTP/SMS')">SMS</button>
+                    </div>
+
+                    <div style="margin-top: 12px; padding: 10px; background: #f8fafc; border-radius: 8px; font-size: 12px; color: #475569;">
+                        <strong>📝 ข้อมูลทดสอบ:</strong> <span style="display:block;">ผู้ใช้: <code>admin</code> / รหัส: <code>123456</code></span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tab Register -->
+            <div id="tab-register" class="tab-pane">
+                <p class="helper">สร้างบัญชีเพื่อรับการแจ้งเตือนและประวัติการสั่งซื้อ</p>
+                <form onsubmit="handleRegister(event)" class="auth-form">
+                    <input type="text" id="registerUsername" placeholder="ชื่อผู้ใช้งาน (3-20 ตัวอักษร)" minlength="3" maxlength="20" required>
+                    <div style="position:relative; margin-bottom:8px;">
+                        <input type="password" id="registerPassword" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)" minlength="6" required>
+                        <button type="button" onclick="toggleInputVisibility('registerPassword', this)" class="secondary-link" style="position:absolute; right:8px; top:6px;">👁️</button>
+                    </div>
+                    <div style="position:relative; margin-bottom:8px;">
+                        <input type="password" id="registerPasswordConfirm" placeholder="ยืนยันรหัสผ่าน" required>
+                        <button type="button" onclick="toggleInputVisibility('registerPasswordConfirm', this)" class="secondary-link" style="position:absolute; right:8px; top:6px;">👁️</button>
+                    </div>
+                    <input type="text" id="registerFullName" placeholder="ชื่อ-นามสกุล" required>
+                    <input type="email" id="registerEmail" placeholder="อีเมล" required>
+
+                    <div class="login-actions">
+                        <button type="submit" class="login-btn">ลงทะเบียน</button>
+                        <button type="button" class="secondary-link" onclick="switchLoginTab('tab-login', event)">กลับไปเข้าสู่ระบบ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('cartModal')">&times;</span>
+            <h2>ตะกร้าสินค้า</h2>
+            <div id="cartItemsList" class="cart-list">
+                <!-- ตัวอย่างรายการสินค้าในตะกร้า (จะถูกสร้างโดย JavaScript) -->
+                <!-- 
+                <div class="cart-item">
+                    <img src="path/to/image.jpg" alt="Product Name">
+                    <div class="item-details">
+                        <p>Product Name</p>
+                        <p>ราคา: ฿1500</p>
+                        <div class="quantity-controls">
+                            <button onclick="updateQuantity(productId, -1)">-</button>
+                            <span>1</span>
+                            <button onclick="updateQuantity(productId, 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="remove-item" onclick="removeFromCart(productId)">&times;</button>
+                </div> 
+                -->
+            </div>
+            <div class="cart-summary">
+                <div class="coupon-section">
+                    <input type="text" id="couponCode" placeholder="ใส่โค้ดส่วนลด">
+                    <button onclick="applyCoupon()">ใช้โค้ด</button>
+                </div>
+                <hr>
+                <p>ราคารวม: <span id="cartSubtotal">฿0</span></p>
+                <p>ค่าจัดส่ง: <span id="shippingCost">฿0</span></p>
+                <p>ส่วนลด: <span id="discountAmount">฿0</span></p>
+                <h3>ยอดชำระสุทธิ: <span id="cartTotalDisplay">฿0</span></h3>
+                <button class="submit-btn" onclick="proceedToCheckout()">ชำระเงิน</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-content large-modal">
+            <span class="close-modal" onclick="closeModal('paymentModal')">&times;</span>
+            <h2>ชำระเงิน</h2>
+            <div class="checkout-grid">
+                <div class="checkout-form">
+                    <h3>ที่อยู่จัดส่ง</h3>
+                    <form id="checkoutForm" onsubmit="handlePayment(event)">
+                        <input type="text" id="customerName" placeholder="ชื่อ-นามสกุล" required>
+                        <input type="text" id="customerAddress" placeholder="ที่อยู่จัดส่ง" required>
+                        <input type="tel" id="customerPhone" placeholder="เบอร์โทรศัพท์" required>
+                        
+                        <h3 style="margin-top:20px;">วิธีการจัดส่ง</h3>
+                        <div class="shipping-options">
+                            <label><input type="radio" name="shipping" value="standard" onchange="updateShippingCost(50)" checked> Standard (5-7 วัน) - ฿50</label>
+                            <label><input type="radio" name="shipping" value="express" onchange="updateShippingCost(100)"> Express (1-2 วัน) - ฿100</label>
+                        </div>
+
+                        <h3 style="margin-top:20px;">วิธีการชำระเงิน</h3>
+                        <div class="payment-options">
+                            <label><input type="radio" name="payment" value="cod" checked> เก็บเงินปลายทาง</label>
+                            <label><input type="radio" name="payment" value="transfer"> โอนเงินผ่านธนาคาร</label>
+                        </div>
+                        
+                        <div id="transferInfo" style="display:none; margin-top:10px; padding:10px; background:#f0f0f0; border-radius:5px;">
+                            <p>ธนาคารกสิกรไทย: 193-8-76714-5</p>
+                            <p>ชื่อบัญชี: จตุพิธพร แก้วเนตร</p>
+                            <small>กรุณาแนบสลิปในแชทหลังจากสั่งซื้อ</small>
+                        </div>
+
+                        <button type="submit" class="submit-btn" style="margin-top: 20px;">ยืนยันคำสั่งซื้อ</button>
+                    </form>
+                </div>
+                <div class="checkout-summary">
+                    <h3>สรุปรายการ</h3>
+                    <div id="checkoutItemsList"></div>
+                    <hr>
+                    <p>ราคารวม: <span id="checkoutSubtotal">฿0</span></p>
+                    <p>ค่าจัดส่ง: <span id="checkoutShipping">฿0</span></p>
+                    <p>ส่วนลด: <span id="checkoutDiscount">฿0</span></p>
+                    <div class="total-price">ยอดชำระสุทธิ: <span id="checkoutTotalDisplay">฿0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="productDetailModal">
+        <div class="modal-content large-modal">
+            <span class="close-modal" onclick="closeModal('productDetailModal')">&times;</span>
+            <div id="productDetailContent" class="product-detail-grid">
+                <!-- Content will be injected by JavaScript -->
+                <!-- Example Structure:
+                <div class="product-detail-image">
+                    <img src="..." alt="Product Name">
+                </div>
+                <div class="product-detail-info">
+                    <h2>Product Name</h2>
+                    <p class="price">฿3,200</p>
+                    <p class="description">รายละเอียดสินค้า...</p>
+                    <div class="size-selector">
+                        <label for="detail-size">Size:</label>
+                        <select id="detail-size">...</select>
+                    </div>
+                    <button class="uiverse-button">เพิ่มลงตะกร้า</button>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+
+            <!-- My Orders Modal -->
+            <div class="modal" id="myOrdersModal">
+                <div class="modal-content large-modal">
+                    <span class="close-modal" onclick="closeModal('myOrdersModal')">&times;</span>
+                    <h2>คำสั่งซื้อของฉัน</h2>
+                    <div id="myOrdersContent">
+                        <!-- orders will be rendered here by script.js -->
+                    </div>
+                </div>
+            </div>
+
+            <script src="notifications.js"></script>
+            <script src="users.js"></script>
+            <script src="script.js"></script>
+            <script src="ui-effects.js"></script>
+    <script>
+    // --- UI Enhancement Scripts ---
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Navbar style change on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 2. Scroll-reveal animations
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        revealElements.forEach(el => {
+            observer.observe(el);
+        });
+    });
+
+    function switchLoginTab(tabId, evt) {
+        const tabs = document.querySelectorAll('.tab-pane');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        const target = document.getElementById(tabId);
+        if (target) target.classList.add('active');
+
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+    }
+
+    function toggleInputVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (btn) btn.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            if (btn) btn.textContent = '👁️';
+        }
+        input.focus();
+    }
+    </script>
+</body>
+</html>
